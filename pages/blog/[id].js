@@ -9,16 +9,22 @@ const Post = ({ post }) => {
 export default Post
 
 export const getServerSideProps = async ({ res, params }) => {
-    const result = await fetch(`http://localhost:5000/posts/${params.id}`)
-    const json = await result.json()
-    if (json.data && json.data.post) {
-        return {
-            props: {
-                post: json.data.post
+    try {
+        const result = await fetch(`http://localhost:5000/posts/${params.id}`)
+        const json = await result.json()
+        if (json.data && json.data.post) {
+            return {
+                props: {
+                    post: json.data.post
+                }
             }
         }
-    }
-    else {
+        else {
+            res.statusCode = 302
+            res.setHeader('Location', '/blog')
+        }
+    } catch (err) {
+        console.log(err)
         res.statusCode = 302
         res.setHeader('Location', '/blog')
     }
